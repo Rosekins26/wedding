@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lily & Terron's Wedding RSVP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background-color: #fff2cc;
+            color: #294a46;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #294a46;
+            margin-bottom: 8px;
+        }
+
+        .card-description {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #294a46;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1rem;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #294a46;
+        }
+
+        .btn {
+            background: #294a46;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 16px;
+        }
+
+        .btn:hover {
+            background: #1f3530;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #294a46;
+            border: 2px solid #294a46;
+        }
+
+        .btn-outline:hover {
+            background: #294a46;
+            color: white;
+        }
+
+        .error {
+            background: #ffe6e6;
+            color: #294a46;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+
+        .success {
+            background: #e6ffe6;
+            color: #294a46;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .badge-purple {
+            background: #f3e8ff;
+            color: #7c3aed;
+        }
+
+        .badge-pink {
+            background: #fce7f3;
+            color: #be185d;
+        }
+
+        .badge-blue {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .badge-gray {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .event-section {
+            margin: 16px 0;
+            padding: 16px;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .event-section h4 {
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .event-friday {
+            background: #8b5cf6;
+        }
+
+        .event-saturday {
+            background: #56b6b2;
+        }
+
+        .event-sunday {
+            background: #294a46;
+        }
+
+        .event-monday {
+            background: #f59e0b;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        .schedule-info {
+            background: #f0f8ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .guest-form {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .guest-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .contact-info {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 16px;
+            }
+            
+            .card-title {
+                font-size: 1.5rem;
+            }
+            
+            .schedule-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Search Page -->
+        <div id="searchPage">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title">Wedding RSVP</h1>
+                    <p class="card-description">Please refer to the envelope to look up your RSVP. Enter your name as it appears.</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="guestName" class="form-label">Name on Invitation</label>
+                    <input type="text" id="guestName" class="form-input" placeholder="Enter your name as it appears">
+                </div>
+                
+                <div id="searchError" class="error hidden">
+                    No invitation found. Please check the spelling or contact the couple.
+                </div>
+                
+                <button onclick="searchInvitation()" class="btn">Find My Invitation</button>
+                
+                <div class="contact-info">
+                    Having trouble? Contact us at lilyandterron2026@gmail.com
+                </div>
+            </div>
+        </div>
+
+        <!-- RSVP Form Page -->
+        <div id="rsvpPage" class="hidden">
+            <div class="card">
+                <button onclick="backToSearch()" class="btn btn-outline" style="width: auto; margin-bottom: 20px;">← Back to Search</button>
+                
+                <div class="card-header">
+                    <h1 class="card-title" id="rsvpTitle">RSVP for Guest</h1>
+                    <p class="card-description" id="rsvpDescription">Party size: 2 guests</p>
+                    <div id="invitationTypeBadge"></div>
+                </div>
+            </div>
+
+            <!-- Schedule Info -->
+            <div class="schedule-info">
+                <h2 style="color: #294a46; margin-bottom: 16px;">Wedding Weekend Schedule</h2>
+                <div class="schedule-grid" id="scheduleGrid">
+                    <div>
+                        <h4 style="color: #294a46;">Saturday Events</h4>
+                        <p>• Beers and Cheers with Bride and Groom (12:00 PM - 3:00 PM)</p>
+                    </div>
+                    <div>
+                        <h4 style="color: #294a46;">Sunday Events</h4>
+                        <p>• Wedding Ceremony (4:30 PM)</p>
+                        <p>• Cocktail Hour (5:00 PM)</p>
+                        <p>• Reception Dinner (6:00 PM - 10:00 PM)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guest Forms -->
+            <div id="guestForms"></div>
+
+            <div id="formError" class="error hidden"></div>
+
+            <div class="card">
+                <button onclick="submitRSVP()" class="btn" id="submitBtn">Submit RSVP</button>
+            </div>
+        </div>
+
+        <!-- Confirmation Page -->
+        <div id="confirmationPage" class="hidden">
+            <div class="card">
+                <div class="card-header">
+                    <div style="text-align: center; margin-bottom: 16px;">
+                        <div style="width: 64px; height: 64px; background: #10b981; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">✓</div>
+                    </div>
+                    <h1 class="card-title">RSVP Submitted Successfully!</h1>
+                    <p class="card-description">Thank you for responding to our wedding invitation</p>
+                </div>
+                
+                <div id="confirmationDetails"></div>
+                
+                <div style="text-align: center; margin-top: 24px;">
+                    <p style="margin-bottom: 16px;">We're so excited to celebrate with you over the wedding weekend!</p>
+                    <button onclick="startOver()" class="btn btn-outline">Submit Another RSVP</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock invitation data
+        const invitations = [
+            {
+                id: "1",
+                primaryGuestName: "John Smith",
+                email: "john.smith@email.com",
+                partySize: 2,
+                invitationType: "family"
+            },
+            {
+                id: "2",
+                primaryGuestName: "Sarah Johnson",
+                email: "sarah.johnson@email.com",
+                partySize: 4,
+                invitationType: "standard"
+            },
+            {
+                id: "3",
+                primaryGuestName: "Michael Brown",
+                email: "michael.brown@email.com",
+                partySize: 1,
+                invitationType: "bridal-party"
+            },
+            {
+                id: "4",
+                primaryGuestName: "Emily Davis",
+                email: "emily.davis@email.com",
+                partySize: 3,
+                invitationType: "plus-one"
+            }
+        ];
+
+        let currentInvitation = null;
+        let guestData = [];
+
+        // Event access by invitation type
+        const eventAccess = {
+            "standard": {
+                bowling: false,
+                beersAndCheers: true,
+                ceremony: true,
+                cocktailHour: true,
+                reception: true,
+                afterPartyBrunch: false
+            },
+            "family": {
+                bowling: false,
+                beersAndCheers: true,
+                ceremony: true,
+                cocktailHour: true,
+                reception: true,
+                afterPartyBrunch: true
+            },
+            "bridal-party": {
+                bowling: true,
+                beersAndCheers: true,
+                ceremony: true,
+                cocktailHour: true,
+                reception: true,
+                afterPartyBrunch: false
+            },
+            "plus-one": {
+                bowling: false,
+                beersAndCheers: true,
+                ceremony: true,
+                cocktailHour: true,
+                reception: true,
+                afterPartyBrunch: false
+            }
+        };
+
+        function searchInvitation() {
+            const searchTerm = document.getElementById('guestName').value.trim();
+            const errorDiv = document.getElementById('searchError');
+            
+            if (!searchTerm) {
+                errorDiv.textContent = 'Please enter a name to search';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            const found = invitations.find(inv => 
+                inv.primaryGuestName.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            if (found) {
+                currentInvitation = found;
+                showRSVPForm();
+                errorDiv.classList.add('hidden');
+            } else {
+                errorDiv.textContent = 'No invitation found. Please check the spelling or contact the couple.';
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        function showRSVPForm() {
+            document.getElementById('searchPage').classList.add('hidden');
+            document.getElementById('rsvpPage').classList.remove('hidden');
+            
+            // Update header
+            document.getElementById('rsvpTitle').textContent = `RSVP for ${currentInvitation.primaryGuestName}`;
+            document.getElementById('rsvpDescription').textContent = `Party size: ${currentInvitation.partySize} ${currentInvitation.partySize === 1 ? 'guest' : 'guests'}`;
+            
+            // Update badge
+            const badge = document.getElementById('invitationTypeBadge');
+            const typeLabels = {
+                'bridal-party': 'Bridal Party',
+                'family': 'Family',
+                'plus-one': 'Plus One(s)',
+                'standard': 'Standard'
+            };
+            const typeColors = {
+                'bridal-party': 'badge-purple',
+                'family': 'badge-pink',
+                'plus-one': 'badge-blue',
+                'standard': 'badge-gray'
+            };
+            badge.innerHTML = `<span class="badge ${typeColors[currentInvitation.invitationType]}">${typeLabels[currentInvitation.invitationType]}</span>`;
+            
+            // Update schedule
+            updateSchedule();
+            
+            // Generate guest forms
+            generateGuestForms();
+        }
+
+        function updateSchedule() {
+            const scheduleGrid = document.getElementById('scheduleGrid');
+            let scheduleHTML = '';
+            
+            if (currentInvitation.invitationType === 'bridal-party') {
+                scheduleHTML += `
+                    <div>
+                        <h4 style="color: #7c3aed;">Friday Events</h4>
+                        <p>• Bowling, let the weekend begin as the couple rolls to forever</p>
+                        <p style="font-size: 0.9rem; color: #7c3aed;">* Exclusive for bridal party</p>
+                    </div>
+                `;
+            }
+            
+            scheduleHTML += `
+                <div>
+                    <h4 style="color: #294a46;">Saturday Events</h4>
+                    <p>• Beers and Cheers with Bride and Groom (12:00 PM - 3:00 PM)</p>
+                </div>
+                <div>
+                    <h4 style="color: #294a46;">Sunday Events</h4>
+                    <p>• Wedding Ceremony (4:30 PM)</p>
+                    <p>• Cocktail Hour (5:00 PM)</p>
+                    <p>• Reception Dinner (6:00 PM - 10:00 PM)</p>
+                </div>
+            `;
+            
+            if (currentInvitation.invitationType === 'family') {
+                scheduleHTML += `
+                    <div>
+                        <h4 style="color: #be185d;">Monday Events</h4>
+                        <p>• After party brunch to end the weekend!</p>
+                        <p style="font-size: 0.9rem; color: #be185d;">* Exclusive for family</p>
+                    </div>
+                `;
+            }
+            
+            scheduleGrid.innerHTML = scheduleHTML;
+        }
+
+        function generateGuestForms() {
+            const container = document.getElementById('guestForms');
+            const access = eventAccess[currentInvitation.invitationType];
+            guestData = [];
+            
+            let formsHTML = '';
+            
+            for (let i = 0; i < currentInvitation.partySize; i++) {
+                guestData.push({
+                    name: '',
+                    events: {
+                        bowling: false,
+                        beersAndCheers: false,
+                        ceremony: false,
+                        cocktailHour: false,
+                        reception: false,
+                        afterPartyBrunch: false
+                    },
+                    dietaryRestrictions: {
+                        vegetarian: false,
+                        vegan: false,
+                        glutenFree: false,
+                        dairyFree: false,
+                        nutAllergy: false,
+                        shellfish: false,
+                        kosher: false,
+                        halal: false,
+                        other: ''
+                    }
+                });
+                
+                formsHTML += `
+                    <div class="guest-form">
+                        <div class="guest-header">
+                            <h3 style="color: #294a46;">Guest ${i + 1}</h3>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Full Name *</label>
+                            <input type="text" class="form-input" placeholder="Enter full name" onchange="updateGuestName(${i}, this.value)">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Event Attendance *</label>
+                            
+                            ${access.bowling ? `
+                                <div class="event-section event-friday">
+                                    <h4>Friday Events</h4>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="bowling_${i}" onchange="updateGuestEvent(${i}, 'bowling', this.checked)">
+                                        <label for="bowling_${i}">Bowling, let the weekend begin as the couple rolls to forever</label>
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            ${access.beersAndCheers ? `
+                                <div class="event-section event-saturday">
+                                    <h4>Saturday Events</h4>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="beersAndCheers_${i}" onchange="updateGuestEvent(${i}, 'beersAndCheers', this.checked)">
+                                        <label for="beersAndCheers_${i}">Beers and Cheers with Bride and Groom (12:00 PM - 3:00 PM)</label>
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            <div class="event-section event-sunday">
+                                <h4>Sunday Events</h4>
+                                ${access.ceremony ? `
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="ceremony_${i}" onchange="updateGuestEvent(${i}, 'ceremony', this.checked)">
+                                        <label for="ceremony_${i}">Wedding Ceremony (4:30 PM)</label>
+                                    </div>
+                                ` : ''}
+                                ${access.cocktailHour ? `
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="cocktailHour_${i}" onchange="updateGuestEvent(${i}, 'cocktailHour', this.checked)">
+                                        <label for="cocktailHour_${i}">Cocktail Hour (5:00 PM)</label>
+                                    </div>
+                                ` : ''}
+                                ${access.reception ? `
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="reception_${i}" onchange="updateGuestEvent(${i}, 'reception', this.checked)">
+                                        <label for="reception_${i}">Reception Dinner (6:00 PM - 10:00 PM)</label>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            ${access.afterPartyBrunch ? `
+                                <div class="event-section event-monday">
+                                    <h4>Monday Events</h4>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="afterPartyBrunch_${i}" onchange="updateGuestEvent(${i}, 'afterPartyBrunch', this.checked)">
+                                        <label for="afterPartyBrunch_${i}">After party brunch to end the weekend!</label>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Dietary Restrictions</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="vegetarian_${i}" onchange="updateDietaryRestriction(${i}, 'vegetarian', this.checked)">
+                                    <label for="vegetarian_${i}">Vegetarian</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="vegan_${i}" onchange="updateDietaryRestriction(${i}, 'vegan', this.checked)">
+                                    <label for="vegan_${i}">Vegan</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="glutenFree_${i}" onchange="updateDietaryRestriction(${i}, 'glutenFree', this.checked)">
+                                    <label for="glutenFree_${i}">Gluten Free</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="dairyFree_${i}" onchange="updateDietaryRestriction(${i}, 'dairyFree', this.checked)">
+                                    <label for="dairyFree_${i}">Dairy Free</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="nutAllergy_${i}" onchange="updateDietaryRestriction(${i}, 'nutAllergy', this.checked)">
+                                    <label for="nutAllergy_${i}">Nut Allergy</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="shellfish_${i}" onchange="updateDietaryRestriction(${i}, 'shellfish', this.checked)">
+                                    <label for="shellfish_${i}">Shellfish Allergy</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="kosher_${i}" onchange="updateDietaryRestriction(${i}, 'kosher', this.checked)">
+                                    <label for="kosher_${i}">Kosher</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="halal_${i}" onchange="updateDietaryRestriction(${i}, 'halal', this.checked)">
+                                    <label for="halal_${i}">Halal</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Other dietary restrictions</label>
+                                <input type="text" class="form-input" placeholder="Please specify any other dietary needs..." onchange="updateDietaryRestriction(${i}, 'other', this.value)">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = formsHTML;
+        }
+
+        function updateGuestName(index, name) {
+            guestData[index].name = name;
+        }
+
+        function updateGuestEvent(index, event, checked) {
+            guestData[index].events[event] = checked;
+        }
+
+        function updateDietaryRestriction(index, restriction, value) {
+            guestData[index].dietaryRestrictions[restriction] = value;
+        }
+
+        function submitRSVP() {
+            const errorDiv = document.getElementById('formError');
+            const errors = [];
+            
+            guestData.forEach((guest, index) => {
+                if (!guest.name.trim()) {
+                    errors.push(`Guest ${index + 1}: Name is required`);
+                }
+                
+                const hasSelectedEvent = Object.values(guest.events).some(selected => selected);
+                if (!hasSelectedEvent) {
+                    errors.push(`Guest ${index + 1}: Please select at least one event`);
+                }
+            });
+            
+            if (errors.length > 0) {
+                errorDiv.innerHTML = `
+                    <strong>Please fix the following errors:</strong><br>
+                    ${errors.map(error => `• ${error}`).join('<br>')}
+                `;
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+            
+            errorDiv.classList.add('hidden');
+            
+            // Simulate submission
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').textContent = 'Submitting...';
+            
+            setTimeout(() => {
+                showConfirmation();
+            }, 1000);
+        }
+
+        function showConfirmation() {
+            document.getElementById('rsvpPage').classList.add('hidden');
+            document.getElementById('confirmationPage').classList.remove('hidden');
+            
+            // Generate confirmation details
+            const detailsDiv = document.getElementById('confirmationDetails');
+            
+            const eventCounts = {
+                bowling: guestData.filter(g => g.events.bowling).length,
+                beersAndCheers: guestData.filter(g => g.events.beersAndCheers).length,
+                ceremony: guestData.filter(g => g.events.ceremony).length,
+                cocktailHour: guestData.filter(g => g.events.cocktailHour).length,
+                reception: guestData.filter(g => g.events.reception).length,
+                afterPartyBrunch: guestData.filter(g => g.events.afterPartyBrunch).length
+            };
+            
+            let summaryHTML = `
+                <div style="margin-bottom: 24px;">
+                    <h3 style="color: #294a46; margin-bottom: 12px;">Party Summary</h3>
+                    <p><strong>Primary Guest:</strong> ${currentInvitation.primaryGuestName}</p>
+                    <p><strong>Party Size:</strong> ${guestData.length} ${guestData.length === 1 ? 'guest' : 'guests'}</p>
+                </div>
+                
+                <div style="margin-bottom: 24px;">
+                    <h3 style="color: #294a46; margin-bottom: 12px;">Event Attendance Summary</h3>
+            `;
+            
+            if (eventCounts.bowling > 0) {
+                summaryHTML += `<p><strong>Friday:</strong> Bowling - ${eventCounts.bowling} attending</p>`;
+            }
+            if (eventCounts.beersAndCheers > 0) {
+                summaryHTML += `<p><strong>Saturday:</strong> Beers & Cheers - ${eventCounts.beersAndCheers} attending</p>`;
+            }
+            summaryHTML += `
+                <p><strong>Sunday:</strong> Ceremony - ${eventCounts.ceremony} attending</p>
+                <p><strong>Sunday:</strong> Cocktail Hour - ${eventCounts.cocktailHour} attending</p>
+                <p><strong>Sunday:</strong> Reception - ${eventCounts.reception} attending</p>
+            `;
+            if (eventCounts.afterPartyBrunch > 0) {
+                summaryHTML += `<p><strong>Monday:</strong> After Party Brunch - ${eventCounts.afterPartyBrunch} attending</p>`;
+            }
+            
+            summaryHTML += `
+                </div>
+                
+                <div>
+                    <h3 style="color: #294a46; margin-bottom: 12px;">Guest Details</h3>
+            `;
+            
+            guestData.forEach(guest => {
+                const attendingEvents = Object.entries(guest.events)
+                    .filter(([_, attending]) => attending)
+                    .map(([event, _]) => event);
+                
+                const dietaryRestrictions = Object.entries(guest.dietaryRestrictions)
+                    .filter(([key, value]) => key !== 'other' && value === true)
+                    .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'));
+                
+                if (guest.dietaryRestrictions.other) {
+                    dietaryRestrictions.push(guest.dietaryRestrictions.other);
+                }
+                
+                summaryHTML += `
+                    <div style="border-left: 4px solid #3b82f6; padding-left: 16px; margin-bottom: 16px;">
+                        <h4 style="color: #294a46;">${guest.name}</h4>
+                        <p>Attending: ${attendingEvents.join(', ') || 'No events selected'}</p>
+                        <p>Dietary restrictions: ${dietaryRestrictions.length > 0 ? dietaryRestrictions.join(', ') : 'None specified'}</p>
+                    </div>
+                `;
+            });
+            
+            summaryHTML += '</div>';
+            detailsDiv.innerHTML = summaryHTML;
+        }
+
+        function backToSearch() {
+            document.getElementById('rsvpPage').classList.add('hidden');
+            document.getElementById('searchPage').classList.remove('hidden');
+            document.getElementById('guestName').value = '';
+            document.getElementById('searchError').classList.add('hidden');
+        }
+
+        function startOver() {
+            document.getElementById('confirmationPage').classList.add('hidden');
+            document.getElementById('searchPage').classList.remove('hidden');
+            document.getElementById('guestName').value = '';
+            document.getElementById('searchError').classList.add('hidden');
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('submitBtn').textContent = 'Submit RSVP';
+            currentInvitation = null;
+            guestData = [];
+        }
+
+        // Allow Enter key to search
+        document.getElementById('guestName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchInvitation();
+            }
+        });
+    </script>
+</body>
+</html>
