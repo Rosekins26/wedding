@@ -1,39 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Heart, Calendar, MapPin } from "lucide-react"
-
-// Sample invitation data
-const sampleInvitations = [
-  {
-    id: "inv-1",
-    primaryGuestName: "John Smith",
-    email: "john.smith@email.com",
-    partySize: 2,
-    invitationType: "family",
-  },
-  {
-    id: "inv-2",
-    primaryGuestName: "Sarah Johnson",
-    email: "sarah.johnson@email.com",
-    partySize: 4,
-    invitationType: "standard",
-  },
-  {
-    id: "inv-3",
-    primaryGuestName: "Michael Brown",
-    email: "michael.brown@email.com",
-    partySize: 1,
-    invitationType: "bridal-party",
-  },
-  {
-    id: "inv-4",
-    primaryGuestName: "Emily Davis",
-    email: "emily.davis@email.com",
-    partySize: 3,
-    invitationType: "plus-one",
-  },
-]
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Textarea } from "@/components/ui/textarea"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Heart, Search, Users, Calendar, Utensils } from "lucide-react"
 
 interface Guest {
   name: string
@@ -64,20 +39,65 @@ interface Guest {
   }
 }
 
+interface Invitation {
+  id: string
+  primaryGuestName: string
+  email: string
+  partySize: number
+  invitationType: string
+}
+
+// Sample data - replace with your actual guest list
+const sampleInvitations: Invitation[] = [
+  {
+    id: "1",
+    primaryGuestName: "John Smith",
+    email: "john.smith@email.com",
+    partySize: 2,
+    invitationType: "family",
+  },
+  {
+    id: "2",
+    primaryGuestName: "Sarah Johnson",
+    email: "sarah.johnson@email.com",
+    partySize: 4,
+    invitationType: "standard",
+  },
+  {
+    id: "3",
+    primaryGuestName: "Michael Brown",
+    email: "michael.brown@email.com",
+    partySize: 1,
+    invitationType: "bridal-party",
+  },
+  {
+    id: "4",
+    primaryGuestName: "Emily Davis",
+    email: "emily.davis@email.com",
+    partySize: 3,
+    invitationType: "plus-one",
+  },
+]
+
 export default function WeddingRSVP() {
   const [searchName, setSearchName] = useState("")
-  const [foundInvitation, setFoundInvitation] = useState<any>(null)
+  const [currentInvitation, setCurrentInvitation] = useState<Invitation | null>(null)
   const [guests, setGuests] = useState<Guest[]>([])
-  const [currentStep, setCurrentStep] = useState<"search" | "rsvp" | "confirmation">("search")
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isSearching, setIsSearching] = useState(false)
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
+    setIsSearching(true)
+
+    // Simulate API call delay
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
     const invitation = sampleInvitations.find((inv) =>
       inv.primaryGuestName.toLowerCase().includes(searchName.toLowerCase()),
     )
 
     if (invitation) {
-      setFoundInvitation(invitation)
+      setCurrentInvitation(invitation)
       // Initialize guests array
       const initialGuests: Guest[] = Array.from({ length: invitation.partySize }, (_, i) => ({
         name: i === 0 ? invitation.primaryGuestName : "",
@@ -108,10 +128,11 @@ export default function WeddingRSVP() {
         },
       }))
       setGuests(initialGuests)
-      setCurrentStep("rsvp")
     } else {
-      alert("Invitation not found. Please check the spelling or contact the couple.")
+      alert("Invitation not found. Please check the name and try again.")
     }
+
+    setIsSearching(false)
   }
 
   const updateGuest = (index: number, field: string, value: any) => {
@@ -128,294 +149,273 @@ export default function WeddingRSVP() {
   }
 
   const handleSubmit = async () => {
-    setIsSubmitting(true)
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    setCurrentStep("confirmation")
-    setIsSubmitting(false)
-  }
-
-  const getEventsByType = (type: string) => {
-    const baseEvents = ["ceremony", "cocktailHour", "reception"]
-
-    switch (type) {
-      case "family":
-        return [...baseEvents, "bowling", "beersAndCheers", "afterPartyBrunch"]
-      case "bridal-party":
-        return ["bowling", "beersAndCheers", ...baseEvents, "afterPartyBrunch"]
-      case "plus-one":
-        return baseEvents
-      default:
-        return [...baseEvents, "afterPartyBrunch"]
+    // Validate that all guests have names
+    const invalidGuests = guests.filter((guest) => !guest.name.trim())
+    if (invalidGuests.length > 0) {
+      alert("Please enter names for all guests.")
+      return
     }
+
+    // Simulate API submission
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    // Store in localStorage for demo purposes
+    const rsvpData = {
+      invitation: currentInvitation,
+      guests: guests,
+      submittedAt: new Date().toISOString(),
+    }
+
+    const existingRSVPs = JSON.parse(localStorage.getItem("weddingRSVPs") || "[]")
+    existingRSVPs.push(rsvpData)
+    localStorage.setItem("weddingRSVPs", JSON.stringify(existingRSVPs))
+
+    setIsSubmitted(true)
   }
 
-  const eventLabels = {
-    bowling: "Friday Night Bowling (Dec 27)",
-    beersAndCheers: "Saturday Beers & Cheers (Dec 28)",
-    ceremony: "Saturday Wedding Ceremony (Dec 28)",
-    cocktailHour: "Saturday Cocktail Hour (Dec 28)",
-    reception: "Saturday Reception (Dec 28)",
-    afterPartyBrunch: "Sunday After-Party Brunch (Dec 29)",
+  const resetForm = () => {
+    setSearchName("")
+    setCurrentInvitation(null)
+    setGuests([])
+    setIsSubmitted(false)
   }
 
-  if (currentStep === "search") {
+  if (isSubmitted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-rose-50 to-pink-100 p-4">
         <div className="max-w-2xl mx-auto">
-          <div className="text-center mb-8">
-            <Heart className="w-16 h-16 text-rose-500 mx-auto mb-4" />
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">Lily & Terron</h1>
-            <p className="text-xl text-gray-600 mb-6">December 28, 2026</p>
-            <div className="flex items-center justify-center gap-4 text-gray-600 mb-8">
-              <div className="flex items-center gap-1">
-                <Calendar className="w-4 h-4" />
-                <span>Dec 27-29, 2026</span>
+          <Card className="text-center">
+            <CardHeader>
+              <div className="flex justify-center mb-4">
+                <Heart className="h-16 w-16 text-rose-500" />
               </div>
-              <div className="flex items-center gap-1">
-                <MapPin className="w-4 h-4" />
-                <span>Chicago, IL</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Find Your Invitation</h2>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Enter the primary guest name as it appears on your invitation:
-                </label>
-                <input
-                  type="text"
-                  value={searchName}
-                  onChange={(e) => setSearchName(e.target.value)}
-                  placeholder="e.g., John Smith"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                  onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-                />
-              </div>
-
-              <button
-                onClick={handleSearch}
-                disabled={!searchName.trim()}
-                className="w-full bg-rose-500 text-white py-3 px-6 rounded-lg hover:bg-rose-600 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors"
-              >
-                <Search className="w-5 h-5" />
-                Find My Invitation
-              </button>
-            </div>
-
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-              <p className="text-sm text-blue-800">
-                <strong>Sample names to try:</strong> John Smith, Sarah Johnson, Michael Brown, Emily Davis
+              <CardTitle className="text-3xl text-rose-800">Thank You!</CardTitle>
+              <CardDescription className="text-lg">Your RSVP has been submitted successfully.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600 mb-6">
+                We're so excited to celebrate with you! You'll receive a confirmation email shortly.
               </p>
-            </div>
-          </div>
+              <Button onClick={resetForm} className="bg-rose-600 hover:bg-rose-700">
+                Submit Another RSVP
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     )
   }
 
-  if (currentStep === "rsvp") {
-    const availableEvents = getEventsByType(foundInvitation.invitationType)
-
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-pink-100 p-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-8">
-            <Heart className="w-12 h-12 text-rose-500 mx-auto mb-4" />
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">RSVP for {foundInvitation.primaryGuestName}</h1>
-            <p className="text-gray-600">
-              Party size: {foundInvitation.partySize} guest{foundInvitation.partySize > 1 ? "s" : ""}
-            </p>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-pink-100 p-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="flex justify-center mb-4">
+            <Heart className="h-12 w-12 text-rose-500" />
           </div>
+          <h1 className="text-4xl font-bold text-rose-800 mb-2">Lily & Terron</h1>
+          <p className="text-xl text-rose-600">Wedding RSVP</p>
+          <p className="text-gray-600 mt-2">Please respond by [Date]</p>
+        </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <div className="space-y-8">
-              {guests.map((guest, index) => (
-                <div key={index} className="border-b border-gray-200 pb-8 last:border-b-0">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                    Guest {index + 1} {index === 0 && "(Primary Guest)"}
-                  </h3>
+        {!currentInvitation ? (
+          /* Search Form */
+          <Card className="max-w-md mx-auto">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Search className="h-5 w-5" />
+                Find Your Invitation
+              </CardTitle>
+              <CardDescription>Enter the name as it appears on your invitation</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="search">Guest Name</Label>
+                <Input
+                  id="search"
+                  value={searchName}
+                  onChange={(e) => setSearchName(e.target.value)}
+                  placeholder="Enter your name..."
+                  onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+                />
+              </div>
+              <Button
+                onClick={handleSearch}
+                disabled={!searchName.trim() || isSearching}
+                className="w-full bg-rose-600 hover:bg-rose-700"
+              >
+                {isSearching ? "Searching..." : "Find My Invitation"}
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          /* RSVP Form */
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Welcome, {currentInvitation.primaryGuestName}!
+                </CardTitle>
+                <CardDescription>
+                  You're invited for {currentInvitation.partySize} guest{currentInvitation.partySize > 1 ? "s" : ""}
+                </CardDescription>
+              </CardHeader>
+            </Card>
 
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
-                      <input
-                        type="text"
-                        value={guest.name}
-                        onChange={(e) => updateGuest(index, "name", e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                        required
-                      />
-                    </div>
+            {guests.map((guest, index) => (
+              <Card key={index}>
+                <CardHeader>
+                  <CardTitle>Guest {index + 1}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Guest Name */}
+                  <div>
+                    <Label htmlFor={`name-${index}`}>Full Name *</Label>
+                    <Input
+                      id={`name-${index}`}
+                      value={guest.name}
+                      onChange={(e) => updateGuest(index, "name", e.target.value)}
+                      placeholder="Enter full name"
+                    />
                   </div>
 
-                  <div className="mt-6">
-                    <h4 className="text-lg font-medium text-gray-800 mb-3">Event Attendance</h4>
-                    <div className="grid md:grid-cols-2 gap-3">
-                      {availableEvents.map((event) => (
-                        <label
-                          key={event}
-                          className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={guest.events[event as keyof typeof guest.events]}
-                            onChange={(e) => updateGuest(index, `events.${event}`, e.target.checked)}
-                            className="w-4 h-4 text-rose-600 border-gray-300 rounded focus:ring-rose-500"
-                          />
-                          <span className="text-sm text-gray-700">
-                            {eventLabels[event as keyof typeof eventLabels]}
-                          </span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="mt-6">
-                    <h4 className="text-lg font-medium text-gray-800 mb-3">Entrée Selection</h4>
-                    <div className="grid md:grid-cols-2 gap-3">
+                  {/* Events */}
+                  <div>
+                    <Label className="flex items-center gap-2 mb-3">
+                      <Calendar className="h-4 w-4" />
+                      Which events will you attend?
+                    </Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {[
-                        { key: "beef", label: "Beef Tenderloin" },
-                        { key: "fish", label: "Grilled Salmon" },
-                        { key: "vegetarianVegan", label: "Vegetarian/Vegan Option" },
-                        { key: "kidsChicken", label: "Kid's Chicken Tenders" },
-                      ].map((entree) => (
-                        <label
-                          key={entree.key}
-                          className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={guest.entreeSelection[entree.key as keyof typeof guest.entreeSelection]}
-                            onChange={(e) => updateGuest(index, `entreeSelection.${entree.key}`, e.target.checked)}
-                            className="w-4 h-4 text-rose-600 border-gray-300 rounded focus:ring-rose-500"
+                        { key: "bowling", label: "Friday Night Bowling" },
+                        { key: "beersAndCheers", label: "Saturday Beers & Cheers" },
+                        { key: "ceremony", label: "Saturday Ceremony" },
+                        { key: "cocktailHour", label: "Saturday Cocktail Hour" },
+                        { key: "reception", label: "Saturday Reception" },
+                        { key: "afterPartyBrunch", label: "Sunday After Party Brunch" },
+                      ].map((event) => (
+                        <div key={event.key} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`${index}-${event.key}`}
+                            checked={guest.events[event.key as keyof typeof guest.events]}
+                            onCheckedChange={(checked) => updateGuest(index, `events.${event.key}`, checked)}
                           />
-                          <span className="text-sm text-gray-700">{entree.label}</span>
-                        </label>
+                          <Label htmlFor={`${index}-${event.key}`} className="text-sm">
+                            {event.label}
+                          </Label>
+                        </div>
                       ))}
                     </div>
                   </div>
 
-                  <div className="mt-6">
-                    <h4 className="text-lg font-medium text-gray-800 mb-3">Dietary Restrictions</h4>
-                    <div className="grid md:grid-cols-3 gap-3">
+                  {/* Entrée Selection */}
+                  <div>
+                    <Label className="flex items-center gap-2 mb-3">
+                      <Utensils className="h-4 w-4" />
+                      Entrée Selection (choose one)
+                    </Label>
+                    <RadioGroup
+                      value={
+                        guest.entreeSelection.beef
+                          ? "beef"
+                          : guest.entreeSelection.fish
+                            ? "fish"
+                            : guest.entreeSelection.vegetarianVegan
+                              ? "vegetarianVegan"
+                              : guest.entreeSelection.kidsChicken
+                                ? "kidsChicken"
+                                : ""
+                      }
+                      onValueChange={(value) => {
+                        const newSelection = {
+                          beef: value === "beef",
+                          fish: value === "fish",
+                          vegetarianVegan: value === "vegetarianVegan",
+                          kidsChicken: value === "kidsChicken",
+                        }
+                        updateGuest(index, "entreeSelection", newSelection)
+                      }}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="beef" id={`${index}-beef`} />
+                        <Label htmlFor={`${index}-beef`}>Beef Tenderloin</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="fish" id={`${index}-fish`} />
+                        <Label htmlFor={`${index}-fish`}>Pan-Seared Salmon</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="vegetarianVegan" id={`${index}-veg`} />
+                        <Label htmlFor={`${index}-veg`}>Vegetarian/Vegan Option</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="kidsChicken" id={`${index}-kids`} />
+                        <Label htmlFor={`${index}-kids`}>Kid's Chicken Tenders</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  {/* Dietary Restrictions */}
+                  <div>
+                    <Label className="mb-3 block">Dietary Restrictions</Label>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">
                       {[
                         { key: "vegetarian", label: "Vegetarian" },
                         { key: "vegan", label: "Vegan" },
-                        { key: "glutenFree", label: "Gluten-Free" },
-                        { key: "dairyFree", label: "Dairy-Free" },
+                        { key: "glutenFree", label: "Gluten Free" },
+                        { key: "dairyFree", label: "Dairy Free" },
                         { key: "nutAllergy", label: "Nut Allergy" },
                         { key: "shellfish", label: "Shellfish Allergy" },
                         { key: "kosher", label: "Kosher" },
                         { key: "halal", label: "Halal" },
                       ].map((restriction) => (
-                        <label key={restriction.key} className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
+                        <div key={restriction.key} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`${index}-${restriction.key}`}
                             checked={
-                              guest.dietaryRestrictions[restriction.key as keyof typeof guest.dietaryRestrictions]
+                              guest.dietaryRestrictions[
+                                restriction.key as keyof typeof guest.dietaryRestrictions
+                              ] as boolean
                             }
-                            onChange={(e) =>
-                              updateGuest(index, `dietaryRestrictions.${restriction.key}`, e.target.checked)
+                            onCheckedChange={(checked) =>
+                              updateGuest(index, `dietaryRestrictions.${restriction.key}`, checked)
                             }
-                            className="w-4 h-4 text-rose-600 border-gray-300 rounded focus:ring-rose-500"
                           />
-                          <span className="text-sm text-gray-700">{restriction.label}</span>
-                        </label>
+                          <Label htmlFor={`${index}-${restriction.key}`} className="text-sm">
+                            {restriction.label}
+                          </Label>
+                        </div>
                       ))}
                     </div>
-
-                    <div className="mt-3">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Other dietary restrictions or allergies:
-                      </label>
-                      <input
-                        type="text"
+                    <div>
+                      <Label htmlFor={`other-${index}`}>Other dietary restrictions</Label>
+                      <Textarea
+                        id={`other-${index}`}
                         value={guest.dietaryRestrictions.other}
                         onChange={(e) => updateGuest(index, "dietaryRestrictions.other", e.target.value)}
-                        placeholder="Please specify..."
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                        placeholder="Please specify any other dietary restrictions..."
+                        rows={2}
                       />
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                </CardContent>
+              </Card>
+            ))}
 
-            <div className="mt-8 flex gap-4">
-              <button
-                onClick={() => setCurrentStep("search")}
-                className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-              >
+            {/* Submit Button */}
+            <div className="flex gap-4 justify-center">
+              <Button onClick={() => setCurrentInvitation(null)} variant="outline">
                 Back to Search
-              </button>
-              <button
-                onClick={handleSubmit}
-                disabled={isSubmitting || guests.some((g) => !g.name.trim())}
-                className="flex-1 bg-rose-500 text-white py-3 px-6 rounded-lg hover:bg-rose-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-              >
-                {isSubmitting ? "Submitting..." : "Submit RSVP"}
-              </button>
+              </Button>
+              <Button onClick={handleSubmit} className="bg-rose-600 hover:bg-rose-700">
+                Submit RSVP
+              </Button>
             </div>
           </div>
-        </div>
+        )}
       </div>
-    )
-  }
-
-  if (currentStep === "confirmation") {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-pink-100 p-4">
-        <div className="max-w-2xl mx-auto">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">RSVP Submitted!</h1>
-            <p className="text-gray-600">Thank you for your response.</p>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">What's Next?</h2>
-            <div className="space-y-4 text-gray-600">
-              <p>• You'll receive a confirmation email shortly</p>
-              <p>• Watch for updates about venue details and timing</p>
-              <p>• Contact us if you need to make changes to your RSVP</p>
-            </div>
-
-            <div className="mt-8 p-4 bg-rose-50 rounded-lg">
-              <h3 className="font-semibold text-rose-800 mb-2">Contact Information</h3>
-              <p className="text-rose-700">
-                Email: lilyandterron2026@gmail.com
-                <br />
-                Phone: (555) 123-4567
-              </p>
-            </div>
-
-            <button
-              onClick={() => {
-                setCurrentStep("search")
-                setSearchName("")
-                setFoundInvitation(null)
-                setGuests([])
-              }}
-              className="w-full mt-6 bg-rose-500 text-white py-3 px-6 rounded-lg hover:bg-rose-600 transition-colors"
-            >
-              Submit Another RSVP
-            </button>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  return null
+    </div>
+  )
 }

@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    // Remove deprecated options
+  },
+  serverExternalPackages: ["@neondatabase/serverless"],
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -9,7 +13,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  async headers() {
+  headers: async () => {
     return [
       {
         source: "/(.*)",

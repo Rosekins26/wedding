@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Lily & Terron Wedding RSVP",
-  description: "RSVP for Lily & Terron's wedding celebration",
+  description: "RSVP for Lily & Terron's Wedding Celebration",
     generator: 'v0.dev'
 }
 
@@ -18,6 +18,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta httpEquiv="X-Frame-Options" content="ALLOWALL" />
+        <meta httpEquiv="Content-Security-Policy" content="frame-ancestors *;" />
+      </head>
       <body className={inter.className}>{children}</body>
     </html>
   )
