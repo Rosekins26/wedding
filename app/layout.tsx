@@ -1,29 +1,29 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Playfair_Display } from "next/font/google"
 import "./globals.css"
 
-const inter = Inter({ subsets: ["latin"] })
+const playfairDisplay = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  style: ["normal", "italic"],
+  display: "swap",
+})
 
 export const metadata: Metadata = {
-  title: "Lily & Terron Wedding RSVP",
-  description: "RSVP for Lily & Terron's Wedding Celebration",
-    generator: 'v0.dev'
+  title: "Wedding RSVP",
+  description: "Wedding RSVP System",
+  generator: "v0.dev",
 }
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode
-}) {
+}>) {
   return (
     <html lang="en">
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta httpEquiv="X-Frame-Options" content="ALLOWALL" />
-        <meta httpEquiv="Content-Security-Policy" content="frame-ancestors *;" />
-      </head>
-      <body className={inter.className}>{children}</body>
+      <body className={playfairDisplay.className}>{children}</body>
     </html>
   )
 }
